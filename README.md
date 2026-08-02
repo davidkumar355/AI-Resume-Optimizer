@@ -1,4 +1,4 @@
-# 🚀 AI-Powered Resume-to-JD Gap Analyzer & Builder
+#  AI-Powered Resume-to-JD Gap Analyzer & Builder
 
 An interactive web application designed to analyze the gap between your resume and a target Job Description (JD), calculate ATS (Applicant Tracking System) scores before and after optimization, and generate a fully tailored, ATS-friendly LaTeX resume ready for download or import into Overleaf.
 
