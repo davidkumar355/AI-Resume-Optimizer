@@ -1,0 +1,26 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Local database / results files
+gap_analysis_results.json
+optimized_resume.tex
+optimized_resume.pdf
+optimized_resume.aux
+optimized_resume.log
+optimized_resume.out
+
+# IDEs
+.vscode/
+.idea/
+.DS_Store
