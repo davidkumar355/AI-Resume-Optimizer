@@ -1,0 +1,177 @@
+%-------------------------
+% ATS-Friendly Resume — Himakesh Krishna
+% Single-column, clean layout, LaTeX
+%-------------------------
+
+\documentclass[11pt, a4paper]{article}
+
+% ---------- Packages ----------
+\usepackage[left=0.6in, right=0.6in, top=0.5in, bottom=0.5in]{geometry}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{titlesec}
+\usepackage{parskip}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{xcolor}
+
+% ---------- Hyperlink style ----------
+\hypersetup{
+    colorlinks=true,
+    urlcolor=black,
+    linkcolor=black
+}
+
+% ---------- Section title formatting ----------
+\titleformat{\section}
+  {\normalfont\large\bfseries\uppercase}
+  {}{0em}{}
+  [\titlerule \vspace{-4pt}]
+
+\titlespacing{\section}{0pt}{6pt}{4pt}
+
+% ---------- No indentation ----------
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt}
+
+% ---------- List formatting ----------
+\setlist[itemize]{noitemsep, topsep=2pt, left=0pt, label=\textbullet}
+
+% ---------- Custom commands ----------
+\newcommand{\resumeSubheading}[4]{
+  \textbf{#1} \hfill \textit{#2} \\
+  \textit{#3} \hfill \textit{#4}
+  \vspace{2pt}
+}
+
+\newcommand{\projectEntry}[3]{
+  \textbf{#1} \hfill \textit{#2} \\
+  \textit{Stack: #3}
+  \vspace{2pt}
+}
+
+% ======================================================
+\begin{document}
+
+% ===================== HEADER =========================
+\begin{center}
+  {\LARGE \textbf{HIMAKESH KRISHNA}} \\[4pt]
+  +91 7979777206 \quad|\quad
+  \href{mailto:dr.himakesh@gmail.com}{dr.himakesh@gmail.com} \quad|\quad
+  \href{https://www.linkedin.com/in/himakesh-krishna}{linkedin.com/in/himakesh-krishna} \quad|\quad
+  \href{https://github.com/davidkumar355}{github.com/davidkumar355}
+\end{center}
+
+\vspace{4pt}
+
+% ================ PROFESSIONAL SUMMARY ================
+\section{Professional Summary}
+
+Data Science practitioner (IIT Guwahati PG Certification, 2025--2026) with hands-on experience building end-to-end ML pipelines across NLP, computer vision, and unsupervised learning --- including a 95\% accuracy BBC News classifier, a 95.52\% CIFAR-10 model with Grad-CAM explainability, and a customer segmentation dashboard deployed on Streamlit. Six years of professional motion graphics and graphic design experience informs a rare strength in data visualization and communicating complex insights to non-technical stakeholders.
+
+\vspace{2pt}
+
+% ================ TECHNICAL SKILLS ===================
+\section{Technical Skills}
+
+\textbf{Languages:} Python, SQL (intermediate) \\
+\textbf{ML / DL Frameworks:} Scikit-learn, TensorFlow, Keras, XGBoost, Random Forest, Gradient Boosting \\
+\textbf{NLP:} NLTK, Word2Vec, HuggingFace (T5, BERT), BiLSTM, Seq2Seq, Bahdanau Attention \\
+\textbf{Computer Vision:} CNN, EfficientNetV2M, DenseNet121, Transfer Learning, Grad-CAM \\
+\textbf{Unsupervised ML:} K-Means, GMM, Agglomerative Clustering, DBSCAN, PCA \\
+\textbf{Data Tools:} Pandas, NumPy, Matplotlib, Seaborn, SHAP, SMOTE, Jupyter \\
+\textbf{Deployment \& Version Control:} Streamlit, Git / GitHub \\
+\textbf{Other:} Feature Engineering, EDA, Statistical Analysis, Class Imbalance Handling
+
+\vspace{2pt}
+
+% ================== PROJECTS ==========================
+\section{Projects}
+
+% Project 1
+\projectEntry{BBC News Multi-Class NLP Classification \& Summarization System}{2025}
+             {Python, Logistic Regression, BiLSTM, Word2Vec, T5-small, HuggingFace, Keras, Streamlit}
+\begin{itemize}
+  \item Built an end-to-end NLP pipeline on 2,225 BBC News articles; Logistic Regression achieved \textbf{95\% accuracy} and Macro F1 of \textbf{0.87} across 5 categories (Tech, Politics, Business, Sports, Entertainment).
+  \item Resolved severe class imbalance via class-weighting strategy, improving minority Technology-class Recall from \textbf{12\% to 64\%} (433\% improvement) in the BiLSTM model.
+  \item Fine-tuned \textbf{T5-small} for abstractive headline generation and implemented \textbf{Bahdanau attention-based Seq2Seq} model --- spanning classical-to-transformer NLP in a single pipeline.
+  \item Deployed interactive Streamlit inference dashboard enabling real-time article classification and headline generation.
+\end{itemize}
+
+\vspace{4pt}
+
+% Project 2
+\projectEntry{CIFAR-10 Computer Vision Pipeline with Explainability}{2025}
+             {TensorFlow, Keras, EfficientNetV2M, DenseNet121, Custom CNN, Grad-CAM, Streamlit}
+\begin{itemize}
+  \item Benchmarked 3 CNN architectures (Custom CNN, DenseNet121, EfficientNetV2M) on CIFAR-10 (60K images, 10 classes); identified and fixed a \textbf{double-preprocessing normalization bug} that suppressed accuracy by $\sim$10\%.
+  \item Trained EfficientNetV2M with \textbf{two-phase fine-tuning} (feature extraction + gradual unfreeze), achieving \textbf{95.52\% test accuracy} --- 6\% above custom CNN baseline.
+  \item Implemented \textbf{Grad-CAM explainability} for nested Functional API model, enabling visual inspection of model attention across all 10 classes.
+  \item Deployed as interactive Streamlit app with real-time prediction and saliency-map visualization for non-technical stakeholders.
+\end{itemize}
+
+\vspace{4pt}
+
+% Project 3
+\projectEntry{Credit Card Customer Behavioral Segmentation}{2025}
+             {Python, K-Means, GMM, Agglomerative, DBSCAN, PCA, Scikit-learn, Pandas, Streamlit}
+\begin{itemize}
+  \item Engineered a customer segmentation pipeline on \textbf{8,950 credit card customers}; applied winsorization, log-transform, and StandardScaler normalization to prepare 17 raw features for distance-based clustering.
+  \item Designed \textbf{4 domain-specific behavioral indicators} (Spend Intensity, Payment Discipline, Revolving Behavior, Cash Dependency) from raw transaction data, transforming low-signal financial fields into interpretable features.
+  \item Applied PCA to retain \textbf{$\sim$96\% variance} while reducing dimensionality; benchmarked K-Means, GMM, Agglomerative, and DBSCAN via silhouette score, inertia, and information criteria.
+  \item Identified 4 actionable customer personas (Power Spender, Disciplined Payer, Silent Revolver, Cash Dependent); deployed as \textbf{3-page Streamlit dashboard} for stakeholder-ready business insights.
+\end{itemize}
+
+\vspace{4pt}
+
+% Project 4
+\projectEntry{Bank Marketing Subscription Classifier (Ensemble Methods Case Study)}{2025}
+             {Python, Scikit-learn, Random Forest, Gradient Boosting, Stacking, SMOTE, SHAP, Pandas}
+\begin{itemize}
+  \item Built a term-deposit subscription classifier on \textbf{11,162 customer records}; resolved class imbalance with SMOTE and benchmarked Random Forest, Gradient Boosting, and Stacking ensembles.
+  \item Stacking Ensemble achieved \textbf{ROC-AUC 0.925}; Random Forest achieved best \textbf{F1-score of 0.853} across 5-fold stratified cross-validation.
+  \item Applied \textbf{SHAP explainability} to identify top predictors (call duration, prior campaign outcome, contact method) and translated model outputs into targeted marketing recommendations.
+\end{itemize}
+
+\vspace{2pt}
+
+% ================== EDUCATION ========================
+\section{Education}
+
+\resumeSubheading{Indian Institute of Technology (IIT), Guwahati}{Aug 2025 -- Jun 2026}
+                 {Post-Graduate Certification in Data Science}{Guwahati, Assam}
+\begin{itemize}
+  \item Relevant coursework: Machine Learning, Deep Learning, NLP, Statistics \& EDA, Predictive Modeling, Data Visualization
+  \item Certifications earned: IITG Statistics \& EDA, IITG Introduction \& Programming in Data Science
+\end{itemize}
+
+\vspace{4pt}
+
+\resumeSubheading{Munger University}{May 2022 -- Sep 2025}
+                 {Bachelor of Science (B.Sc.) --- Zoology / Animal Biology}{Munger, Bihar}
+
+\vspace{2pt}
+
+% ================ WORK EXPERIENCE ====================
+\section{Work Experience}
+
+\resumeSubheading{Nerul Marketing}{Dec 2024 -- Dec 2025}
+                 {Graphic Designer \& Motion Graphics Specialist}{Remote}
+\begin{itemize}
+  \item Designed \textbf{50+ data-driven motion graphic presentations} for enterprise clients, translating complex performance metrics and campaign data into visual narratives for non-technical stakeholders.
+  \item Developed full creative pipelines using Photoshop, After Effects, CapCut, and AI tools --- managed client brief to delivery end-to-end.
+\end{itemize}
+
+\vspace{2pt}
+
+% ================ CERTIFICATIONS =====================
+\section{Certifications}
+
+\begin{itemize}
+  \item \textbf{IITG Statistics and EDA} --- Indian Institute of Technology, Guwahati
+  \item \textbf{IITG Introduction \& Programming in Data Science} --- Indian Institute of Technology, Guwahati
+  \item \textbf{Adobe Photoshop Graphic Design} --- Adobe Certified
+\end{itemize}
+
+\end{document}

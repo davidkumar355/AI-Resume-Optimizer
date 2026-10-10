@@ -19,6 +19,9 @@ optimized_resume.pdf
 optimized_resume.aux
 optimized_resume.log
 optimized_resume.out
+optimized_resume.docx
+*.docx
+run_log.txt
 
 # IDEs
 .vscode/

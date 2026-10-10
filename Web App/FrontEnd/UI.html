@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html class="light" lang="en">
+<head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>Ditto</title>
+<link rel="icon" type="image/png" href="logo.png">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
+<style>
+    :root, html.light {
+        --color-background: #fbf9f3;
+        --color-on-background: #1b1c18;
+        --color-surface: #fbf9f3;
+        --color-on-surface: #1b1c18;
+        --color-surface-container-high: #eae8e2;
+        --color-surface-container-low: #f5f3ed;
+        --color-primary: #000000;
+        --color-on-primary: #ffffff;
+        --color-outline-variant: #c4c7c7;
+        --color-outline: #747878;
+        --color-on-surface-variant: #444748;
+        --color-error: #ba1a1a;
+        --color-error-container: #ffdad6;
+        --color-secondary: #615e56;
+        --color-surface-tint: #5f5e5e;
+    }
+    html.dark {
+        --color-background: #1b1c18;
+        --color-on-background: #fbf9f3;
+        --color-surface: #1b1c18;
+        --color-on-surface: #fbf9f3;
+        --color-surface-container-high: #30312d;
+        --color-surface-container-low: #1d1b1a;
+        --color-primary: #ffffff;
+        --color-on-primary: #000000;
+        --color-outline-variant: #444748;
+        --color-outline: #c4c7c7;
+        --color-on-surface-variant: #c4c7c7;
+        --color-error: #ffb4ab;
+        --color-error-container: #93000a;
+        --color-secondary: #cbc6bc;
+        --color-surface-tint: #eae8e2;
+    }
+    .dragover {
+        border-color: var(--color-primary) !important;
+        background-color: var(--color-surface-container-low) !important;
+    }
+</style>
+<script id="tailwind-config">
+    tailwind.config = {
+        darkMode: "class",
+        theme: {
+            extend: {
+                colors: {
+                    "background": "var(--color-background)",
+                    "on-background": "var(--color-on-background)",
+                    "surface": "var(--color-surface)",
+                    "on-surface": "var(--color-on-surface)",
+                    "surface-container-high": "var(--color-surface-container-high)",
+                    "surface-container-low": "var(--color-surface-container-low)",
+                    "primary": "var(--color-primary)",
+                    "on-primary": "var(--color-on-primary)",
+                    "outline-variant": "var(--color-outline-variant)",
+                    "outline": "var(--color-outline)",
+                    "on-surface-variant": "var(--color-on-surface-variant)",
+                    "error": "var(--color-error)",
+                    "error-container": "var(--color-error-container)",
+                    "secondary": "var(--color-secondary)",
+                    "surface-tint": "var(--color-surface-tint)"
+                },
+                borderRadius: {
+                    DEFAULT: "0rem",
+                    lg: "0rem",
+                    xl: "0rem",
+                    full: "9999px"
+                },
+                spacing: {
+                    xl: "48px",
+                    unit: "4px",
+                    gutter: "16px",
+                    md: "16px",
+                    lg: "24px",
+                    margin: "32px",
+                    xs: "4px",
+                    sm: "8px"
+                },
+                fontFamily: {
+                    "body-md": ["Hanken Grotesk", "sans-serif"],
+                    "headline-sm": ["Hanken Grotesk", "sans-serif"],
+                    "body-lg": ["Hanken Grotesk", "sans-serif"],
+                    "headline-lg": ["Hanken Grotesk", "sans-serif"],
+                    "label-caps": ["JetBrains Mono", "monospace"],
+                    "headline-md": ["Hanken Grotesk", "sans-serif"],
+                    "data-mono": ["JetBrains Mono", "monospace"]
+                },
+                fontSize: {
+                    "body-md": ["14px", { lineHeight: "1.5", letterSpacing: "0", fontWeight: "400" }],
+                    "headline-sm": ["18px", { lineHeight: "1.4", letterSpacing: "0", fontWeight: "600" }],
+                    "body-lg": ["16px", { lineHeight: "1.6", letterSpacing: "0", fontWeight: "400" }],
+                    "headline-lg": ["32px", { lineHeight: "1.2", letterSpacing: "-0.02em", fontWeight: "600" }],
+                    "label-caps": ["11px", { lineHeight: "1", letterSpacing: "0.08em", fontWeight: "700" }],
+                    "headline-md": ["24px", { lineHeight: "1.2", letterSpacing: "-0.01em", fontWeight: "600" }],
+                    "data-mono": ["13px", { lineHeight: "1.4", letterSpacing: "-0.01em", fontWeight: "500" }]
+                }
+            }
+        }
+    }
+</script>
+</head>
+<body class="min-h-screen font-body-md overflow-x-hidden bg-background text-on-background">
+
+<!-- Top Navigation Bar -->
+<nav class="bg-surface fixed top-0 w-full z-50 flex justify-between items-center px-gutter h-16 border-b border-outline-variant">
+    <div class="font-headline-sm text-headline-sm font-bold tracking-tighter text-primary flex items-center gap-2">
+        <img src="logo.png" alt="Ditto Logo" class="h-7 w-7 object-contain" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='/static/logo.png';}">
+        <span>Ditto</span>
+    </div>
+
+    <div class="flex items-center gap-md">
+        <!-- Capsule Gauge -->
+        <div id="capsule-gauge" class="flex items-center bg-surface-container-high border border-outline-variant rounded-full px-4 py-1 gap-2">
+            <span class="font-label-caps text-label-caps text-on-surface">ATS MATCH</span>
+            <div class="w-24 h-2 bg-surface border border-outline-variant rounded-full overflow-hidden flex items-center">
+                <div id="gauge-bar-before" class="h-full bg-outline transition-all duration-500" style="width: 0%;"></div>
+                <div id="gauge-bar-gain" class="h-full bg-primary transition-all duration-500" style="width: 0%;"></div>
+            </div>
+            <span id="gauge-text-scores" class="font-data-mono text-data-mono">--% → --%</span>
+            <span id="gauge-text-delta" class="font-data-mono text-data-mono text-primary font-bold ml-1">+0%</span>
+        </div>
+
+        <div class="flex items-center gap-xs text-primary">
+            <button id="theme-toggle" class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-high transition-colors p-3 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none" aria-label="Toggle dark mode">dark_mode</button>
+            <button id="api-key-btn" class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-high transition-colors p-3 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none relative" title="Configure Groq API Key">
+                key
+                <span id="key-badge" class="hidden absolute top-2 right-2 w-2 h-2 bg-emerald-500 rounded-full"></span>
+            </button>
+        </div>
+    </div>
+</nav>
+
+<!-- Main Workspace Canvas -->
+<main class="pt-24 pb-xl px-xl max-w-[1360px] mx-auto grid grid-cols-1 md:grid-cols-3 gap-xl min-h-[calc(100vh-64px)]">
+
+    <!-- ═══ COLUMN 1: INGESTION ═══ -->
+    <section class="flex flex-col gap-lg">
+        <div class="flex items-center justify-between border-b border-outline-variant pb-2">
+            <h2 class="font-headline-md text-headline-md text-primary">1. Ingestion</h2>
+            <span class="font-label-caps text-label-caps text-on-surface-variant">INPUT DOCS</span>
+        </div>
+
+        <!-- Resume File Dropzone -->
+        <div id="resume-dropzone" class="border border-dashed border-outline-variant bg-surface-container-high hover:border-primary flex flex-col items-center justify-center p-lg min-h-[170px] gap-sm cursor-pointer transition-colors text-center relative">
+            <input type="file" id="resume-input" accept=".pdf" class="hidden">
+            <span id="resume-icon" class="material-symbols-outlined text-[36px] text-primary">upload_file</span>
+            <span id="resume-name" class="font-data-mono text-data-mono text-primary font-bold">DRAG & DROP RESUME (PDF)</span>
+            <span id="resume-sub" class="font-label-caps text-label-caps text-on-surface-variant">Click to browse or drop file here</span>
+            <span id="resume-size" class="font-label-caps text-label-caps text-emerald-600 hidden font-bold"></span>
+        </div>
+
+        <!-- Job Description Textarea -->
+        <div class="border border-outline-variant bg-surface flex flex-col">
+            <div class="bg-surface-container-high border-b border-outline-variant p-xs px-md flex justify-between items-center">
+                <span class="font-label-caps text-label-caps text-primary">TARGET JOB DESCRIPTION</span>
+                <span id="jd-counter" class="font-data-mono text-[11px] text-on-surface-variant">0 chars</span>
+            </div>
+            <textarea id="jd-input" rows="8" class="w-full bg-surface p-md font-body-md text-primary resize-none focus:outline-none focus:bg-surface-container-low transition-colors" placeholder="Paste the complete job description here (responsibilities, required skills, frameworks, experience requirements)..."></textarea>
+        </div>
+
+        <!-- Error Notification Banner -->
+        <div id="error-banner" class="hidden border border-error bg-error-container p-md flex items-start gap-sm">
+            <span class="material-symbols-outlined text-error text-[18px]">error</span>
+            <div class="flex flex-col gap-1">
+                <span id="error-title" class="font-label-caps text-label-caps text-error font-bold">ERROR</span>
+                <span id="error-message" class="font-data-mono text-data-mono text-error"></span>
+            </div>
+        </div>
+
+        <!-- Action Button -->
+        <button id="optimize-btn" class="w-full bg-primary text-on-primary font-label-caps text-label-caps py-md px-lg hover:bg-surface-tint transition-colors flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer">
+            <span class="material-symbols-outlined text-[18px]">play_arrow</span>
+            <span id="optimize-btn-text">RUN OPTIMIZATION ENGINE</span>
+        </button>
+    </section>
+
+    <!-- ═══ COLUMN 2: OPTIMIZATION ENGINE ═══ -->
+    <section class="flex flex-col gap-lg">
+        <div class="flex items-center justify-between border-b border-outline-variant pb-2">
+            <h2 class="font-headline-md text-headline-md text-primary">2. Engine</h2>
+            <span id="progress-percent" class="font-data-mono text-data-mono text-primary font-bold">READY (0%)</span>
+        </div>
+
+        <!-- Missing Keywords Display -->
+        <div class="border border-outline-variant bg-surface flex flex-col">
+            <div class="bg-surface-container-high border-b border-outline-variant p-xs px-md flex justify-between items-center">
+                <span class="font-label-caps text-label-caps">IDENTIFIED MISSING KEYWORDS</span>
+                <span id="missing-count" class="font-data-mono text-[11px] text-on-surface-variant">0 detected</span>
+            </div>
+            <div id="missing-keywords-container" class="p-md flex flex-wrap gap-xs min-h-[90px] items-center">
+                <span class="text-on-surface-variant font-data-mono text-data-mono italic opacity-60">Keywords to weave in will appear here...</span>
+            </div>
+        </div>
+
+        <!-- Live Optimization Log -->
+        <div class="border border-outline-variant bg-surface p-0 flex flex-col h-full min-h-[380px]">
+            <div class="bg-surface-container-high border-b border-outline-variant p-xs px-md flex justify-between items-center">
+                <span class="font-label-caps text-label-caps">LIVE OPTIMIZATION LOG</span>
+                <div class="w-20 h-1.5 bg-surface border border-outline-variant overflow-hidden">
+                    <div id="log-progress-bar" class="h-full bg-primary transition-all duration-300" style="width: 0%;"></div>
+                </div>
+            </div>
+            <div id="live-log" class="p-md font-data-mono text-data-mono text-on-surface-variant flex flex-col gap-sm overflow-y-auto max-h-[360px] flex-grow">
+                <div class="flex gap-2 text-on-surface-variant opacity-60">
+                    <span>&gt;</span><span>System standing by. Provide resume and JD to initiate LangGraph pipeline.</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══ COLUMN 3: HUMAN REVIEW & EXPORT ═══ -->
+    <section class="flex flex-col gap-lg">
+        <div class="flex items-center justify-between border-b border-outline-variant pb-2">
+            <h2 class="font-headline-md text-headline-md text-primary">3. Review & Export</h2>
+            <span class="font-label-caps text-label-caps text-on-surface-variant">HITL CONTROL</span>
+        </div>
+
+        <!-- Enhancement Preview -->
+        <div class="border border-outline-variant bg-surface flex flex-col flex-grow min-h-[300px]">
+            <div class="bg-surface-container-high border-b border-outline-variant p-xs px-md flex justify-between items-center">
+                <span class="font-label-caps text-label-caps">ENHANCEMENT PREVIEW</span>
+                <div class="flex items-center gap-2">
+                    <button id="prev-bullet-btn" class="material-symbols-outlined text-[16px] text-on-surface-variant hover:text-primary cursor-pointer disabled:opacity-30" disabled>chevron_left</button>
+                    <span id="bullet-pager" class="font-data-mono text-[11px] text-on-surface-variant">0 / 0</span>
+                    <button id="next-bullet-btn" class="material-symbols-outlined text-[16px] text-on-surface-variant hover:text-primary cursor-pointer disabled:opacity-30" disabled>chevron_right</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 flex-grow">
+                <!-- Original Bullet -->
+                <div class="border-b md:border-b-0 md:border-r border-outline-variant p-md flex flex-col gap-sm">
+                    <span class="font-label-caps text-label-caps text-outline">ORIGINAL</span>
+                    <p id="original-bullet-text" class="font-body-md text-body-md text-on-surface-variant line-through opacity-70">
+                        Original bullet points from your resume will appear here for side-by-side comparison.
+                    </p>
+                </div>
+
+                <!-- Optimized Bullet (Read / Edit) -->
+                <div class="p-md flex flex-col gap-sm bg-surface-container-low">
+                    <div class="flex justify-between items-center">
+                        <span class="font-label-caps text-label-caps text-primary">OPTIMIZED (STAR / XYZ)</span>
+                        <span id="edit-badge" class="hidden font-label-caps text-[10px] bg-primary text-on-primary px-1.5 py-0.5">EDITING</span>
+                    </div>
+                    <div id="optimized-view-container">
+                        <p id="optimized-bullet-text" class="font-body-md text-body-md text-primary leading-relaxed">
+                            AI-enhanced bullet points woven with missing keywords and quantifiable metrics will display here.
+                        </p>
+                    </div>
+                    <textarea id="optimized-edit-textarea" class="hidden w-full bg-surface border border-primary p-2 font-body-md text-primary resize-none focus:outline-none" rows="5"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Controls -->
+        <div class="flex flex-col gap-sm mt-auto">
+            <button id="approve-btn" disabled class="w-full bg-primary text-on-primary font-label-caps text-label-caps py-md px-lg hover:bg-surface-tint disabled:opacity-40 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer">
+                <span id="approve-btn-text">[ Approve & Generate Documents ]</span>
+                <span class="material-symbols-outlined text-[16px]">check_circle</span>
+            </button>
+            <button id="edit-toggle-btn" disabled class="w-full bg-transparent border border-outline-variant text-primary font-label-caps text-label-caps py-md px-lg hover:bg-surface-container-high disabled:opacity-40 disabled:cursor-not-allowed transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none cursor-pointer">
+                <span id="edit-btn-text">[ Edit Current Enhancement ]</span>
+            </button>
+        </div>
+
+        <!-- Download Links Section (Revealed on Approval) -->
+        <div id="download-section" class="hidden border border-primary bg-surface-container-high p-md flex flex-col gap-sm">
+            <div class="flex items-center justify-between">
+                <span class="font-label-caps text-label-caps text-primary font-bold">READY FOR DOWNLOAD</span>
+                <span class="material-symbols-outlined text-[18px] text-emerald-600">task_alt</span>
+            </div>
+            <p id="download-message" class="font-data-mono text-[11px] text-on-surface-variant"></p>
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 mt-1">
+                <a id="download-pdf-btn" href="#" target="_blank" class="hidden bg-primary text-on-primary font-data-mono text-[12px] py-2 px-3 text-center hover:opacity-90 transition-opacity font-bold">
+                    📄 PDF File
+                </a>
+                <a id="download-tex-btn" href="#" target="_blank" class="bg-surface border border-outline-variant font-data-mono text-[12px] py-2 px-3 text-center text-primary hover:bg-surface-container-low transition-colors">
+                    📝 LaTeX (.tex)
+                </a>
+                <a id="download-docx-btn" href="#" target="_blank" class="bg-surface border border-outline-variant font-data-mono text-[12px] py-2 px-3 text-center text-primary hover:bg-surface-container-low transition-colors">
+                    📄 Word (.docx)
+                </a>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- ═══ API KEY MODAL DIALOG ═══ -->
+<div id="api-key-modal" class="hidden fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4">
+    <div class="bg-surface border border-outline max-w-md w-full p-lg flex flex-col gap-md shadow-2xl">
+        <div class="flex items-center justify-between border-b border-outline-variant pb-2">
+            <div class="flex items-center gap-2 font-headline-sm text-headline-sm text-primary">
+                <span class="material-symbols-outlined">key</span>
+                <span>Groq API Key (BYOK)</span>
+            </div>
+            <button id="close-modal-btn" class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-high p-1">close</button>
+        </div>
+        <p class="font-body-md text-on-surface-variant text-[13px]">
+            Bring Your Own Key: Enter your Groq API key to power the LangGraph multi-agent optimizer.
+            Your key is kept strictly in this browser tab (<code class="font-data-mono">sessionStorage</code>) and sent directly with requests. It is never stored on a database.
+        </p>
+        <div class="flex flex-col gap-1">
+            <label class="font-label-caps text-label-caps text-primary">GROQ API KEY</label>
+            <input type="password" id="api-key-input" placeholder="gsk_..." class="w-full bg-surface-container-high border border-outline-variant p-2 font-data-mono text-primary text-[13px] focus:outline-none focus:border-primary">
+        </div>
+        <div class="flex justify-end gap-2 mt-2">
+            <button id="cancel-modal-btn" class="font-label-caps text-label-caps border border-outline-variant px-4 py-2 text-primary hover:bg-surface-container-high">Cancel</button>
+            <button id="save-key-btn" class="font-label-caps text-label-caps bg-primary text-on-primary px-4 py-2 hover:bg-surface-tint">Save Key</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // ─── Theme Management ───────────────────────────────────────────────────
+    const themeToggle = document.getElementById('theme-toggle');
+    const htmlElement = document.documentElement;
+
+    themeToggle.addEventListener('click', () => {
+        if (htmlElement.classList.contains('dark')) {
+            htmlElement.classList.remove('dark');
+            htmlElement.classList.add('light');
+            themeToggle.textContent = 'dark_mode';
+            themeToggle.setAttribute('aria-label', 'Enable dark mode');
+        } else {
+            htmlElement.classList.remove('light');
+            htmlElement.classList.add('dark');
+            themeToggle.textContent = 'light_mode';
+            themeToggle.setAttribute('aria-label', 'Enable light mode');
+        }
+    });
+
+    // ─── State Store ────────────────────────────────────────────────────────
+    let selectedFile = null;
+    let pipelineRunning = false;
+    let pipelineResult = null;
+    let currentBulletIndex = 0;
+    let isEditingCurrentBullet = false;
+
+    // ─── DOM References ─────────────────────────────────────────────────────
+    const resumeDropzone = document.getElementById('resume-dropzone');
+    const resumeInput = document.getElementById('resume-input');
+    const resumeName = document.getElementById('resume-name');
+    const resumeSub = document.getElementById('resume-sub');
+    const resumeSize = document.getElementById('resume-size');
+    const resumeIcon = document.getElementById('resume-icon');
+
+    const jdInput = document.getElementById('jd-input');
+    const jdCounter = document.getElementById('jd-counter');
+    const optimizeBtn = document.getElementById('optimize-btn');
+    const optimizeBtnText = document.getElementById('optimize-btn-text');
+
+    const progressPercent = document.getElementById('progress-percent');
+    const logProgressBar = document.getElementById('log-progress-bar');
+    const liveLog = document.getElementById('live-log');
+    const missingKeywordsContainer = document.getElementById('missing-keywords-container');
+    const missingCount = document.getElementById('missing-count');
+
+    const originalBulletText = document.getElementById('original-bullet-text');
+    const optimizedBulletText = document.getElementById('optimized-bullet-text');
+    const optimizedViewContainer = document.getElementById('optimized-view-container');
+    const optimizedEditTextarea = document.getElementById('optimized-edit-textarea');
+    const bulletPager = document.getElementById('bullet-pager');
+    const prevBulletBtn = document.getElementById('prev-bullet-btn');
+    const nextBulletBtn = document.getElementById('next-bullet-btn');
+    const editToggleBtn = document.getElementById('edit-toggle-btn');
+    const editBtnText = document.getElementById('edit-btn-text');
+    const editBadge = document.getElementById('edit-badge');
+    const approveBtn = document.getElementById('approve-btn');
+    const approveBtnText = document.getElementById('approve-btn-text');
+
+    const downloadSection = document.getElementById('download-section');
+    const downloadMessage = document.getElementById('download-message');
+    const downloadPdfBtn = document.getElementById('download-pdf-btn');
+    const downloadTexBtn = document.getElementById('download-tex-btn');
+    const downloadDocxBtn = document.getElementById('download-docx-btn');
+
+    const errorBanner = document.getElementById('error-banner');
+    const errorMessage = document.getElementById('error-message');
+
+    const apiKeyModal = document.getElementById('api-key-modal');
+    const apiKeyBtn = document.getElementById('api-key-btn');
+    const keyBadge = document.getElementById('key-badge');
+    const apiKeyInput = document.getElementById('api-key-input');
+    const saveKeyBtn = document.getElementById('save-key-btn');
+    const closeModalBtn = document.getElementById('close-modal-btn');
+    const cancelModalBtn = document.getElementById('cancel-modal-btn');
+
+    // ─── API Key Management ─────────────────────────────────────────────────
+    function getStoredApiKey() {
+        return sessionStorage.getItem('groq_api_key') || '';
+    }
+
+    function updateKeyBadge() {
+        if (getStoredApiKey()) {
+            keyBadge.classList.remove('hidden');
+        } else {
+            keyBadge.classList.add('hidden');
+        }
+    }
+    updateKeyBadge();
+
+    apiKeyBtn.addEventListener('click', () => {
+        apiKeyInput.value = getStoredApiKey();
+        apiKeyModal.classList.remove('hidden');
+        apiKeyInput.focus();
+    });
+
+    closeModalBtn.addEventListener('click', () => apiKeyModal.classList.add('hidden'));
+    cancelModalBtn.addEventListener('click', () => apiKeyModal.classList.add('hidden'));
+
+    saveKeyBtn.addEventListener('click', () => {
+        const val = apiKeyInput.value.trim();
+        if (val) {
+            sessionStorage.setItem('groq_api_key', val);
+        } else {
+            sessionStorage.removeItem('groq_api_key');
+        }
+        updateKeyBadge();
+        apiKeyModal.classList.add('hidden');
+        hideError();
+    });
+
+    // ─── File Upload Dropzone ───────────────────────────────────────────────
+    resumeDropzone.addEventListener('click', () => resumeInput.click());
+
+    resumeDropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        resumeDropzone.classList.add('dragover');
+    });
+
+    resumeDropzone.addEventListener('dragleave', () => {
+        resumeDropzone.classList.remove('dragover');
+    });
+
+    resumeDropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        resumeDropzone.classList.remove('dragover');
+        if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+            handleFileSelect(e.dataTransfer.files[0]);
+        }
+    });
+
+    resumeInput.addEventListener('change', (e) => {
+        if (e.target.files && e.target.files[0]) {
+            handleFileSelect(e.target.files[0]);
+        }
+    });
+
+    function handleFileSelect(file) {
+        if (!file.name.toLowerCase().endsWith('.pdf')) {
+            showError('Please select a valid PDF file.');
+            return;
+        }
+        selectedFile = file;
+        const sizeMb = (file.size / (1024 * 1024)).toFixed(2);
+        resumeName.textContent = file.name.toUpperCase();
+        resumeSub.textContent = 'PDF file loaded and ready';
+        resumeSize.textContent = `${sizeMb} MB`;
+        resumeSize.classList.remove('hidden');
+        resumeIcon.textContent = 'check_circle';
+        resumeIcon.classList.add('text-emerald-600');
+        hideError();
+    }
+
+    // ─── Job Description Character Counter ──────────────────────────────────
+    jdInput.addEventListener('input', () => {
+        jdCounter.textContent = `${jdInput.value.length} chars`;
+    });
+
+    // ─── Helpers: Logging & Errors ──────────────────────────────────────────
+    function logMessage(text, type = 'info') {
+        const row = document.createElement('div');
+        row.className = 'flex gap-2';
+
+        let colorClass = 'text-primary';
+        if (type === 'error') colorClass = 'text-error';
+        if (type === 'success') colorClass = 'text-emerald-600 font-bold';
+        if (type === 'secondary') colorClass = 'text-on-surface-variant opacity-80';
+
+        row.innerHTML = `<span class="${colorClass}">&gt;</span><span class="${colorClass}">${text}</span>`;
+        liveLog.appendChild(row);
+        liveLog.scrollTop = liveLog.scrollHeight;
+    }
+
+    function setProgress(percent, label = '') {
+        const p = Math.min(100, Math.max(0, percent));
+        logProgressBar.style.width = `${p}%`;
+        progressPercent.textContent = label ? `${label} (${p}%)` : `${p}%`;
+    }
+
+    function showError(msg) {
+        errorMessage.textContent = msg;
+        errorBanner.classList.remove('hidden');
+    }
+
+    function hideError() {
+        errorBanner.classList.add('hidden');
+        errorMessage.textContent = '';
+    }
+
+    // ─── Pipeline Execution (POST + SSE Reader) ─────────────────────────────
+    optimizeBtn.addEventListener('click', async () => {
+        if (pipelineRunning) return;
+
+        hideError();
+
+        // 1. Validations
+        if (!selectedFile) {
+            showError('Please upload your resume in PDF format.');
+            return;
+        }
+
+        const jdText = jdInput.value.trim();
+        if (jdText.length < 50) {
+            showError('Please paste a comprehensive job description (at least 50 characters).');
+            return;
+        }
+
+        const apiKey = getStoredApiKey();
+        if (!apiKey) {
+            apiKeyModal.classList.remove('hidden');
+            showError('Please enter your Groq API key to proceed.');
+            return;
+        }
+
+        // 2. Setup UI for Run
+        pipelineRunning = true;
+        optimizeBtn.disabled = true;
+        optimizeBtnText.textContent = 'OPTIMIZING IN PROGRESS...';
+        liveLog.innerHTML = '';
+        missingKeywordsContainer.innerHTML = '<span class="text-on-surface-variant font-data-mono text-data-mono italic opacity-60">Scanning for keyword gaps...</span>';
+        missingCount.textContent = '0 detected';
+        setProgress(5, 'INITIALIZING');
+        approveBtn.disabled = true;
+        editToggleBtn.disabled = true;
+        downloadSection.classList.add('hidden');
+
+        logMessage('Connecting to AI Resume Optimizer backend...', 'secondary');
+
+        const formData = new FormData();
+        formData.append('resume', selectedFile);
+        formData.append('jd_text', jdText);
+
+        try {
+            const response = await fetch('/api/optimize/stream', {
+                method: 'POST',
+                headers: {
+                    'X-Groq-API-Key': apiKey
+                },
+                body: formData
+            });
+
+            if (!response.ok) {
+                let errDetail = 'Failed to start optimization stream.';
+                try {
+                    const errJson = await response.json();
+                    errDetail = errJson.detail || errDetail;
+                } catch (_) {}
+                throw new Error(errDetail);
+            }
+
+            // Read SSE Stream
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            let buffer = '';
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+
+                buffer += decoder.decode(value, { stream: true });
+                const events = buffer.split('\n\n');
+                buffer = events.pop(); // Retain incomplete chunk
+
+                for (const rawEvent of events) {
+                    if (!rawEvent.trim()) continue;
+
+                    let eventType = 'message';
+                    let eventDataStr = '';
+
+                    const lines = rawEvent.split('\n');
+                    for (const line of lines) {
+                        if (line.startsWith('event: ')) {
+                            eventType = line.slice(7).trim();
+                        } else if (line.startsWith('data: ')) {
+                            eventDataStr = line.slice(6).trim();
+                        }
+                    }
+
+                    if (eventDataStr) {
+                        try {
+                            const data = JSON.parse(eventDataStr);
+                            handleSSEEvent(eventType, data);
+                        } catch (e) {
+                            console.error('Failed to parse SSE JSON:', e, eventDataStr);
+                        }
+                    }
+                }
+            }
+
+        } catch (err) {
+            logMessage(`Pipeline Error: ${err.message}`, 'error');
+            showError(err.message);
+            setProgress(0, 'FAILED');
+        } finally {
+            pipelineRunning = false;
+            optimizeBtn.disabled = false;
+            optimizeBtnText.textContent = 'RE-RUN OPTIMIZATION';
+        }
+    });
+
+    // ─── SSE Event Dispatcher ───────────────────────────────────────────────
+    function handleSSEEvent(type, data) {
+        if (type === 'status') {
+            logMessage(`[${data.label}] ${data.message}`);
+            setProgress(data.progress, data.label.toUpperCase());
+
+            // Check if preview data contains missing keywords
+            if (data.data_preview && data.data_preview.gap_analysis) {
+                renderMissingKeywords(data.data_preview.gap_analysis.missing_skills || []);
+            }
+        } else if (type === 'result') {
+            pipelineResult = data;
+            renderPipelineResult(data);
+        } else if (type === 'done') {
+            logMessage(`✓ ${data.message} (${data.elapsed_seconds}s)`, 'success');
+            setProgress(100, 'COMPLETED');
+        } else if (type === 'error') {
+            logMessage(`✗ ${data.message}`, 'error');
+            showError(data.message);
+        }
+    }
+
+    function renderMissingKeywords(keywords) {
+        if (!keywords || keywords.length === 0) return;
+        missingCount.textContent = `${keywords.length} detected`;
+        missingKeywordsContainer.innerHTML = '';
+        keywords.forEach(kw => {
+            const chip = document.createElement('span');
+            chip.className = 'border border-outline-variant px-2 py-1 font-data-mono text-data-mono bg-surface-container-high';
+            chip.textContent = kw;
+            missingKeywordsContainer.appendChild(chip);
+        });
+    }
+
+    function renderPipelineResult(result) {
+        // 1. Update Gauge
+        const beforeScore = Math.round(result.ats_score_before?.overall_score || 0);
+        const afterScore = Math.round(result.ats_score_after?.overall_score || 0);
+        const delta = afterScore - beforeScore;
+
+        document.getElementById('gauge-bar-before').style.width = `${beforeScore}%`;
+        document.getElementById('gauge-bar-gain').style.width = `${Math.max(0, delta)}%`;
+        document.getElementById('gauge-text-scores').textContent = `${beforeScore}% → ${afterScore}%`;
+        document.getElementById('gauge-text-delta').textContent = `${delta >= 0 ? '+' : ''}${delta}%`;
+
+        // 2. Render Missing Keywords
+        renderMissingKeywords(result.gap_analysis?.missing_skills || []);
+
+        // 3. Setup Bullets for Review
+        const bullets = result.optimized_resume?.enhanced_bullets || [];
+        currentBulletIndex = 0;
+        updateBulletView();
+
+        if (bullets.length > 0) {
+            approveBtn.disabled = false;
+            editToggleBtn.disabled = false;
+        }
+    }
+
+    function updateBulletView() {
+        const bullets = pipelineResult?.optimized_resume?.enhanced_bullets || [];
+        if (bullets.length === 0) {
+            bulletPager.textContent = '0 / 0';
+            prevBulletBtn.disabled = true;
+            nextBulletBtn.disabled = true;
+            return;
+        }
+
+        bulletPager.textContent = `${currentBulletIndex + 1} / ${bullets.length}`;
+        prevBulletBtn.disabled = currentBulletIndex === 0;
+        nextBulletBtn.disabled = currentBulletIndex === bullets.length - 1;
+
+        const current = bullets[currentBulletIndex];
+        originalBulletText.textContent = current.original || 'N/A';
+        optimizedBulletText.textContent = current.enhanced || 'N/A';
+        optimizedEditTextarea.value = current.enhanced || '';
+    }
+
+    prevBulletBtn.addEventListener('click', () => {
+        if (currentBulletIndex > 0) {
+            saveCurrentEditIfNeeded();
+            currentBulletIndex--;
+            updateBulletView();
+        }
+    });
+
+    nextBulletBtn.addEventListener('click', () => {
+        const bullets = pipelineResult?.optimized_resume?.enhanced_bullets || [];
+        if (currentBulletIndex < bullets.length - 1) {
+            saveCurrentEditIfNeeded();
+            currentBulletIndex++;
+            updateBulletView();
+        }
+    });
+
+    // ─── Human Review: Edit Enhancements ────────────────────────────────────
+    editToggleBtn.addEventListener('click', () => {
+        if (!isEditingCurrentBullet) {
+            // Enter edit mode
+            isEditingCurrentBullet = true;
+            optimizedViewContainer.classList.add('hidden');
+            optimizedEditTextarea.classList.remove('hidden');
+            editBadge.classList.remove('hidden');
+            editBtnText.textContent = '[ Save Current Edit ]';
+            optimizedEditTextarea.focus();
+        } else {
+            // Save and exit edit mode
+            saveCurrentEditIfNeeded();
+            isEditingCurrentBullet = false;
+            optimizedViewContainer.classList.remove('hidden');
+            optimizedEditTextarea.classList.add('hidden');
+            editBadge.classList.add('hidden');
+            editBtnText.textContent = '[ Edit Current Enhancement ]';
+        }
+    });
+
+    function saveCurrentEditIfNeeded() {
+        if (pipelineResult?.optimized_resume?.enhanced_bullets) {
+            const editedText = optimizedEditTextarea.value.trim();
+            if (editedText) {
+                pipelineResult.optimized_resume.enhanced_bullets[currentBulletIndex].enhanced = editedText;
+                optimizedBulletText.textContent = editedText;
+            }
+        }
+    }
+
+    // ─── Document Export (POST /api/generate) ────────────────────────────────
+    approveBtn.addEventListener('click', async () => {
+        if (!pipelineResult) return;
+        saveCurrentEditIfNeeded();
+
+        approveBtn.disabled = true;
+        approveBtnText.textContent = 'COMPILING EXPORTS...';
+        logMessage('Compiling LaTeX to PDF and generating DOCX...', 'secondary');
+
+        try {
+            const payload = {
+                resume_data: pipelineResult.resume_data || {},
+                optimized_resume: pipelineResult.optimized_resume || {},
+                gap_analysis: pipelineResult.gap_analysis || {},
+                user_edits: {
+                    enhanced_bullets: pipelineResult.optimized_resume?.enhanced_bullets || []
+                }
+            };
+
+            const response = await fetch('/api/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-Groq-API-Key': getStoredApiKey()
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                throw new Error(errData.detail || 'Export generation failed.');
+            }
+
+            const data = await response.json();
+            downloadMessage.textContent = data.message || 'Files ready for download.';
+
+            // PDF button
+            if (data.pdf_url) {
+                downloadPdfBtn.href = data.pdf_url;
+                downloadPdfBtn.classList.remove('hidden');
+            } else {
+                downloadPdfBtn.classList.add('hidden');
+            }
+
+            // LaTeX source button
+            if (data.tex_url) {
+                downloadTexBtn.href = data.tex_url;
+                downloadTexBtn.classList.remove('hidden');
+            }
+
+            // DOCX button
+            if (data.docx_url) {
+                downloadDocxBtn.href = data.docx_url;
+                downloadDocxBtn.classList.remove('hidden');
+            }
+
+            downloadSection.classList.remove('hidden');
+            logMessage('✓ Final documents generated successfully!', 'success');
+
+        } catch (err) {
+            logMessage(`Export failed: ${err.message}`, 'error');
+            showError(`Export error: ${err.message}`);
+        } finally {
+            approveBtn.disabled = false;
+            approveBtnText.textContent = '[ Approved & Generated ✓ ]';
+        }
+    });
+</script>
+</body>
+</html>
