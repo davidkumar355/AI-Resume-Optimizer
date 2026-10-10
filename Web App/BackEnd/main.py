@@ -13,6 +13,9 @@ from fastapi.responses import FileResponse, JSONResponse
 from config import (
     HOST,
     PORT,
+    BACKEND_DIR,
+    WEB_APP_DIR,
+    PROJECT_ROOT,
     FRONTEND_DIR,
     TEMP_DIR,
     TEMP_FILE_TTL_MINUTES,
