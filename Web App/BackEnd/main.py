@@ -119,10 +119,23 @@ if FRONTEND_DIR.exists():
             content={"message": "logo.png not found in FrontEnd directory."}
         )
 
+    @app.get("/logo_white.png", response_class=FileResponse)
+    async def serve_logo_white():
+        """Serves the white application logo."""
+        logo_file = FRONTEND_DIR / "logo_white.png"
+        if logo_file.exists():
+            return FileResponse(str(logo_file), media_type="image/png")
+        return JSONResponse(
+            status_code=status.HTTP_404_NOT_FOUND,
+            content={"message": "logo_white.png not found in FrontEnd directory."}
+        )
+
     @app.get("/favicon.ico", response_class=FileResponse)
     async def serve_favicon():
-        """Serves the favicon."""
-        logo_file = FRONTEND_DIR / "logo.png"
+        """Serves the favicon in white format."""
+        logo_file = FRONTEND_DIR / "logo_white.png"
+        if not logo_file.exists():
+            logo_file = FRONTEND_DIR / "logo.png"
         if logo_file.exists():
             return FileResponse(str(logo_file), media_type="image/png")
         return JSONResponse(

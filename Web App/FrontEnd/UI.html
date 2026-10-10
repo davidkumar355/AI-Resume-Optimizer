@@ -4,7 +4,8 @@
 <meta charset="utf-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
 <title>Ditto</title>
-<link rel="icon" type="image/png" href="logo.png">
+<link rel="icon" type="image/png" href="logo_white.png">
+<link rel="shortcut icon" type="image/png" href="logo_white.png">
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
 <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet">
@@ -46,6 +47,12 @@
     .dragover {
         border-color: var(--color-primary) !important;
         background-color: var(--color-surface-container-low) !important;
+    }
+    .brand-logo {
+        transition: filter 0.25s ease-in-out;
+    }
+    html.dark .brand-logo {
+        filter: invert(1) !important;
     }
 </style>
 <script id="tailwind-config">
@@ -114,7 +121,7 @@
 <!-- Top Navigation Bar -->
 <nav class="bg-surface fixed top-0 w-full z-50 flex justify-between items-center px-gutter h-16 border-b border-outline-variant">
     <div class="font-headline-sm text-headline-sm font-bold tracking-tighter text-primary flex items-center gap-2">
-        <img src="logo.png" alt="Ditto Logo" class="h-7 w-7 object-contain" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='/static/logo.png';}">
+        <img id="nav-brand-logo" src="logo.png" alt="Ditto Logo" class="h-7 w-7 object-contain brand-logo dark:invert" onerror="if(!this.dataset.tried){this.dataset.tried='1';this.src='/static/logo.png';}">
         <span>Ditto</span>
     </div>
 
