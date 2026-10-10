@@ -82,66 +82,89 @@ app.add_middleware(
 app.include_router(optimize_router)
 app.include_router(export_router)
 
-# Mount FrontEnd directory for static asset delivery
-if FRONTEND_DIR.exists():
-    app.mount("/static", StaticFiles(directory=str(FRONTEND_DIR)), name="static")
+# Helper for resolving frontend files across deployment contexts
+def find_frontend_file(filename: str):
+    """Finds a frontend asset across candidate paths."""
+    candidates = [
+        FRONTEND_DIR / filename if FRONTEND_DIR else None,
+        BACKEND_DIR / "frontend" / filename,
+        BACKEND_DIR / "FrontEnd" / filename,
+        WEB_APP_DIR / "FrontEnd" / filename,
+        PROJECT_ROOT / "Web App" / "FrontEnd" / filename,
+        Path.cwd() / "frontend" / filename,
+        Path.cwd() / "FrontEnd" / filename,
+        BACKEND_DIR / filename,
+    ]
+    for c in candidates:
+        if c and c.exists():
+            return c
+    return None
 
-    @app.get("/", response_class=FileResponse)
-    async def serve_index():
-        """Serves the main application UI."""
-        ui_file = FRONTEND_DIR / "UI.html"
-        if ui_file.exists():
-            return FileResponse(str(ui_file))
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"message": "UI.html not found in FrontEnd directory."}
-        )
 
-    @app.get("/UI.html", response_class=FileResponse)
-    async def serve_ui_html():
-        """Direct access to UI.html."""
-        ui_file = FRONTEND_DIR / "UI.html"
-        if ui_file.exists():
-            return FileResponse(str(ui_file))
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"message": "UI.html not found in FrontEnd directory."}
-        )
+# Mount static asset directory
+static_dir = FRONTEND_DIR if (FRONTEND_DIR and FRONTEND_DIR.exists()) else (BACKEND_DIR / "frontend")
+if static_dir.exists():
+    app.mount("/static", StaticFiles(directory=str(static_dir)), name="static")
 
-    @app.get("/logo.png", response_class=FileResponse)
-    async def serve_logo():
-        """Serves the application logo."""
-        logo_file = FRONTEND_DIR / "logo.png"
-        if logo_file.exists():
-            return FileResponse(str(logo_file), media_type="image/png")
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"message": "logo.png not found in FrontEnd directory."}
-        )
 
-    @app.get("/logo_white.png", response_class=FileResponse)
-    async def serve_logo_white():
-        """Serves the white application logo."""
-        logo_file = FRONTEND_DIR / "logo_white.png"
-        if logo_file.exists():
-            return FileResponse(str(logo_file), media_type="image/png")
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"message": "logo_white.png not found in FrontEnd directory."}
-        )
+@app.get("/", response_class=FileResponse)
+async def serve_index():
+    """Serves the main application UI."""
+    ui_file = find_frontend_file("UI.html")
+    if ui_file:
+        return FileResponse(str(ui_file))
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"message": "UI.html not found in any frontend candidate path."}
+    )
 
-    @app.get("/favicon.ico", response_class=FileResponse)
-    async def serve_favicon():
-        """Serves the favicon in white format."""
-        logo_file = FRONTEND_DIR / "logo_white.png"
-        if not logo_file.exists():
-            logo_file = FRONTEND_DIR / "logo.png"
-        if logo_file.exists():
-            return FileResponse(str(logo_file), media_type="image/png")
-        return JSONResponse(
-            status_code=status.HTTP_404_NOT_FOUND,
-            content={"message": "favicon not found in FrontEnd directory."}
-        )
+
+@app.get("/UI.html", response_class=FileResponse)
+async def serve_ui_html():
+    """Direct access to UI.html."""
+    ui_file = find_frontend_file("UI.html")
+    if ui_file:
+        return FileResponse(str(ui_file))
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"message": "UI.html not found."}
+    )
+
+
+@app.get("/logo.png", response_class=FileResponse)
+async def serve_logo():
+    """Serves the application logo."""
+    logo_file = find_frontend_file("logo.png")
+    if logo_file:
+        return FileResponse(str(logo_file), media_type="image/png")
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"message": "logo.png not found."}
+    )
+
+
+@app.get("/logo_white.png", response_class=FileResponse)
+async def serve_logo_white():
+    """Serves the white application logo."""
+    logo_file = find_frontend_file("logo_white.png")
+    if logo_file:
+        return FileResponse(str(logo_file), media_type="image/png")
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"message": "logo_white.png not found."}
+    )
+
+
+@app.get("/favicon.ico", response_class=FileResponse)
+async def serve_favicon():
+    """Serves the favicon in white format."""
+    logo_file = find_frontend_file("logo_white.png") or find_frontend_file("logo.png")
+    if logo_file:
+        return FileResponse(str(logo_file), media_type="image/png")
+    return JSONResponse(
+        status_code=status.HTTP_404_NOT_FOUND,
+        content={"message": "favicon not found."}
+    )
 
 
 @app.exception_handler(Exception)

@@ -5,7 +5,24 @@ from pathlib import Path
 BACKEND_DIR = Path(__file__).resolve().parent
 WEB_APP_DIR = BACKEND_DIR.parent
 PROJECT_ROOT = WEB_APP_DIR.parent
-FRONTEND_DIR = WEB_APP_DIR / "FrontEnd"
+
+# Resolve FRONTEND_DIR: search backend/frontend first, then sibling and parent directories
+FRONTEND_CANDIDATES = [
+    BACKEND_DIR / "frontend",
+    BACKEND_DIR / "FrontEnd",
+    WEB_APP_DIR / "FrontEnd",
+    PROJECT_ROOT / "Web App" / "FrontEnd",
+    PROJECT_ROOT / "FrontEnd",
+    Path.cwd() / "frontend",
+    Path.cwd() / "FrontEnd",
+]
+
+FRONTEND_DIR = BACKEND_DIR / "frontend"
+for candidate in FRONTEND_CANDIDATES:
+    if candidate.exists() and (candidate / "UI.html").exists():
+        FRONTEND_DIR = candidate
+        break
+
 TEMP_DIR = BACKEND_DIR / "temp"
 
 # Ensure temp directory exists
